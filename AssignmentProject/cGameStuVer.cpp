@@ -107,15 +107,15 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		}
 	}
 	// Load game sounds
-	soundList = { "theme", "click" };
-	soundTypes = { soundType::music, soundType::sfx};
-	soundsToUse = { "Audio/Theme/Kevin_MacLeod_-_Winter_Reflections.wav", "Audio/SFX/ClickOn.wav"};
+	soundList = { "menuTheme", "gameTheme", "exitTheme", "wind", "click", "stomp", "stompHit"};
+	soundTypes = { soundType::music, soundType::music, soundType::music, soundType::music, soundType::sfx, soundType::sfx, soundType::sfx};
+	soundsToUse = { "Audio/Theme/againstodds.wav", "Audio/Theme/bensound-extremeaction.wav", "Audio/Theme/bensound-straight.mp3", "Audio/Theme/Wind.wav", "Audio/SFX/ClickOn.wav", "Audio/SFX/Stomp.wav", "Audio/SFX/StompHit.wav"};
 	for (unsigned int sounds = 0; sounds < soundList.size(); sounds++)
 	{
 		theSoundMgr->add(soundList[sounds], soundsToUse[sounds], soundTypes[sounds]);
 	}
 
-	theSoundMgr->getSnd("theme")->play(-1);
+
 
 	spriteBkgd.setSpritePos({ 0, 0 });
 	spriteBkgd.setTexture(theTextureMgr->getTexture("OpeningScreen"));
@@ -155,6 +155,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	{
 	case gameState::menu:
 	{
+		theSoundMgr->getSnd("menuTheme")->play(-1);
 		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 		// Render the Title
 		spriteBkgd.setSpritePos({ 0, 0 });
@@ -178,6 +179,8 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	break;
 	case gameState::playing:
 	{
+		
+		theSoundMgr->getSnd("gameTheme")->play(-1);
 		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 		spriteBkgd.setSpritePos({ 0, 0 });
 		spriteBkgd.setTexture(theTextureMgr->getTexture("theBackground"));
@@ -197,6 +200,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	break;
 	case gameState::end:
 	{
+		theSoundMgr->getSnd("exitTheme")->play(-1);
 		spriteBkgd.setSpritePos({ 0, 0 });
 		spriteBkgd.setTexture(theTextureMgr->getTexture("ClosingScreen"));
 		spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("ClosingScreen")->getTWidth(), theTextureMgr->getTexture("OpeningScreen")->getTHeight());
@@ -258,7 +262,7 @@ void cGame::update(double deltaTime)
 	{
 		if (theShip.isStomping == true) {
 			bottlesCollected++;
-			theSoundMgr->getSnd("click")->play(0);
+			theSoundMgr->getSnd("stompHit")->play(0);
 			strScore = gameTextList[gameTextList.size() - 1];
 			strScore += to_string(bottlesCollected).c_str();
 			theTextureMgr->deleteTexture("BottleCount");
@@ -392,9 +396,10 @@ bool cGame::getInput(bool theLoop)
 				case SDLK_SPACE:
 				{
 					if (theGameState == gameState::playing)
-						if (theShip.getMapPosition().C > 0)
+						if (theShip.getMapPosition().C >= 0)
 						{
 							theShip.isStomping = true;
+							theSoundMgr->getSnd("stomp")->play(0);
 						}
 				}
 				break;
