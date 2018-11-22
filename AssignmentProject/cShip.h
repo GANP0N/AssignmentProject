@@ -5,7 +5,6 @@ class cShip : public cSprite
 private:
 	MapRC shipPos;
 	float shipRotation;
-
 public:
 	cShip();
 	virtual ~cShip();
@@ -14,5 +13,6 @@ public:
 	MapRC getMapPosition();
 	void setShipRotation(float angle);
 	float getShipRotation();
+	bool  isStomping;
 };
 

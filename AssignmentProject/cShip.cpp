@@ -43,6 +43,8 @@ float cShip::getShipRotation()
 	return this->shipRotation;
 }
 
+
+
 /*
 =================================================================
 Defualt Destructor

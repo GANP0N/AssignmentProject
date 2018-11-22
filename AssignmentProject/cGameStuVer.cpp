@@ -123,7 +123,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	theTileMap.setMapStartXY({ 150, 100 });
 	theShip.setMapPosition(0, 1);
-	theBottle.genRandomPos(theShip.getMapPosition().R, theShip.getMapPosition().C);
+	theBottle.setMapPosition(1, 2);
 	theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
 	theTileMap.update(theBottle.getMapPosition(), 2, theBottle.getBottleRotation());
 
@@ -254,16 +254,20 @@ void cGame::update(double deltaTime)
 	theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, gameState::menu, theAreaClicked);
 
 	// Check if ship has collided with the bottle
-	if (theShip.getMapPosition() == theBottle.getMapPosition())
+	if ((theShip.getMapPosition().C == theBottle.getMapPosition().C) && theShip.getMapPosition().R == (theBottle.getMapPosition().R)-1)
 	{
-		bottlesCollected++;
-		theSoundMgr->getSnd("click")->play(0);
-		strScore = gameTextList[gameTextList.size() - 1];
-		strScore += to_string(bottlesCollected).c_str();
-		theTextureMgr->deleteTexture("BottleCount");
-		theBottle.genRandomPos(theShip.getMapPosition().R, theShip.getMapPosition().C);
-		theTileMap.update(theBottle.getMapPosition(), 2, theBottle.getBottleRotation());
-		theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
+		if (theShip.isStomping == true) {
+			bottlesCollected++;
+			theSoundMgr->getSnd("click")->play(0);
+			strScore = gameTextList[gameTextList.size() - 1];
+			strScore += to_string(bottlesCollected).c_str();
+			theTextureMgr->deleteTexture("BottleCount");
+			theBottle.genRandomPos(theShip.getMapPosition().R, theShip.getMapPosition().C);
+			theTileMap.update(theBottle.getMapPosition(), 2, theBottle.getBottleRotation());
+			theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
+			theShip.isStomping = false;
+			
+		}
 	}
 }
 
@@ -390,7 +394,7 @@ bool cGame::getInput(bool theLoop)
 					if (theGameState == gameState::playing)
 						if (theShip.getMapPosition().C > 0)
 						{
-							//Change sprite to stomp
+							theShip.isStomping = true;
 						}
 				}
 				break;
