@@ -94,7 +94,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	}
 	// Create text Textures
 	gameTextNames = { "TitleTxt", "CollectTxt", "InstructTxt", "ThanksTxt", "SeeYouTxt","BottleCount"};
-	gameTextList = { "Pirate  Treasure", "Collect the bottles of Rum!", "Use the arrow keys to navigate the map.", "Thanks for playing!", "See you again soon!", "Collected: "};
+	gameTextList = { "Stomp", "Defeat the enemies!", "Use the Left & Right arrow keys to move.", "Thanks for playing!", "See you again soon!", "Collected: "};
 	for (unsigned int text = 0; text < gameTextNames.size(); text++)
 	{
 		if (text == 0)
@@ -122,7 +122,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("OpeningScreen")->getTWidth(), theTextureMgr->getTexture("OpeningScreen")->getTHeight());
 
 	theTileMap.setMapStartXY({ 150, 100 });
-	theShip.setMapPosition(spriteRandom(gen), spriteRandom(gen));
+	theShip.setMapPosition(0, 1);
 	theBottle.genRandomPos(theShip.getMapPosition().R, theShip.getMapPosition().C);
 	theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
 	theTileMap.update(theBottle.getMapPosition(), 2, theBottle.getBottleRotation());
@@ -334,7 +334,7 @@ bool cGame::getInput(bool theLoop)
 				case SDLK_ESCAPE:
 					theLoop = false;
 					break;
-				case SDLK_DOWN:
+				/*case SDLK_DOWN:
 				{
 						if(theGameState == gameState::playing)
 							if (theShip.getMapPosition().R < 9)
@@ -346,7 +346,7 @@ bool cGame::getInput(bool theLoop)
 							}
 				}
 				break;
-
+				
 				case SDLK_UP:
 				{
 					if (theGameState == gameState::playing)
@@ -359,10 +359,11 @@ bool cGame::getInput(bool theLoop)
 						}
 				}
 				break;
+				*/
 				case SDLK_RIGHT:
 				{
 					if (theGameState == gameState::playing)
-						if (theShip.getMapPosition().C < 9)
+						if (theShip.getMapPosition().C < 2)
 						{
 							theTileMap.update(theShip.getMapPosition(), 1, theShip.getShipRotation());
 							theShip.setMapPosition(theShip.getMapPosition().R, theShip.getMapPosition().C + 1);
@@ -371,7 +372,7 @@ bool cGame::getInput(bool theLoop)
 						}
 				}
 				break;
-
+				
 				case SDLK_LEFT:
 				{
 					if (theGameState == gameState::playing)
@@ -386,6 +387,11 @@ bool cGame::getInput(bool theLoop)
 				break;
 				case SDLK_SPACE:
 				{
+					if (theGameState == gameState::playing)
+						if (theShip.getMapPosition().C > 0)
+						{
+							//Change sprite to stomp
+						}
 				}
 				break;
 				default:
