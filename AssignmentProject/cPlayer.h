@@ -1,18 +1,18 @@
 #pragma once
 #include "cSprite.h"
-class cShip : public cSprite
+class cPlayer : public cSprite
 {
 private:
-	MapRC shipPos;
-	float shipRotation;
+	MapRC playerPos;
+	float playerRotation;
 public:
-	cShip();
-	virtual ~cShip();
+	cPlayer();
+	virtual ~cPlayer();
 	void update(int row, int column);
 	void setMapPosition(int row, int column);
 	MapRC getMapPosition();
-	void setShipRotation(float angle);
-	float getShipRotation();
+	void setPlayerRotation(float angle);
+	float getPlayerRotation();
 	bool  isStomping;
 };
 

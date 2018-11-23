@@ -174,14 +174,14 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AssignmentProject.h" />
-    <ClInclude Include="cBottle.h" />
+    <ClInclude Include="cEnemy.h" />
     <ClInclude Include="cButton.h" />
     <ClInclude Include="cButtonMgr.h" />
     <ClInclude Include="cFont.h" />
     <ClInclude Include="cFontMgr.h" />
     <ClInclude Include="cGame.h" />
     <ClInclude Include="cSDL2WNDManager.h" />
-    <ClInclude Include="cShip.h" />
+    <ClInclude Include="cPlayer.h" />
     <ClInclude Include="cSound.h" />
     <ClInclude Include="cSoundMgr.h" />
     <ClInclude Include="cSprite.h" />
@@ -189,28 +189,28 @@ xcopy /Y "SDL2\SDL2_mixer-2.0.1\lib\x86\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="cTextureMgr.h" />
     <ClInclude Include="cTileMap.h" />
     <ClInclude Include="GameConstants.h" />
-    <ClInclude Include="PirateTreasure.h" />
+    <ClInclude Include="STOMP.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssignmentProject.cpp" />
-    <ClCompile Include="cBottle.cpp" />
+    <ClCompile Include="cEnemy.cpp" />
     <ClCompile Include="cButton.cpp" />
     <ClCompile Include="cButtonMgr.cpp" />
     <ClCompile Include="cFont.cpp" />
     <ClCompile Include="cFontMgr.cpp" />
     <ClCompile Include="cGameStuVer.cpp" />
     <ClCompile Include="cSDL2WNDManager.cpp" />
-    <ClCompile Include="cShip.cpp" />
+    <ClCompile Include="cPlayer.cpp" />
     <ClCompile Include="cSound.cpp" />
     <ClCompile Include="cSoundMgr.cpp" />
     <ClCompile Include="cSprite.cpp" />
     <ClCompile Include="cTexture.cpp" />
     <ClCompile Include="cTextureMgr.cpp" />
     <ClCompile Include="cTileMap.cpp" />
-    <ClCompile Include="PirateTreasureSDL2.cpp" />
+    <ClCompile Include="STOMPSDL2.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

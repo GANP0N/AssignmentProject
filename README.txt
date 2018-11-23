@@ -12,3 +12,5 @@ Stomp SFX obtained from freesound.org: https://freesound.org/people/darealwollen
 StompHit SFX obtained from freesound.org and modified by myself, Oliver Threlfall: https://freesound.org/people/AlienXXX/sounds/208455/
 
 Exit Screen Music from Bensound.com: https://www.bensound.com/royalty-free-music/track/straight
+
+Dark Soldier placeholder sprite: https://opengameart.org/content/dark-soldier-for-valyria-tear

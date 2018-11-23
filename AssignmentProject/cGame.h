@@ -10,7 +10,7 @@ cGame.h
 #include <SDL.h>
 
 // Game specific includes
-#include "PirateTreasure.h"
+#include "STOMP.h"
 #include<random>
 
 using namespace std;
@@ -77,9 +77,9 @@ private:
 	SDL_Color aColour;
 	cTexture* tempTextTexture;
 	SDL_Point theAreaClicked;
-	cShip theShip;
-	cBottle theBottle;
-	int bottlesCollected;
+	cPlayer thePlayer;
+	cEnemy theEnemy;
+	int Score;
 	string strScore;
 };
 

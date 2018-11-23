@@ -30,19 +30,10 @@
     <ClInclude Include="cGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PirateTreasure.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cBottle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="cTileMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cShip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="cSprite.h">
@@ -75,6 +66,15 @@
     <ClInclude Include="cSDL2WNDManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cEnemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cPlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="STOMP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -87,12 +87,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cTileMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cBottle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cShip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cSound.cpp">
@@ -125,7 +119,13 @@
     <ClCompile Include="cSDL2WNDManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PirateTreasureSDL2.cpp">
+    <ClCompile Include="cEnemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="STOMPSDL2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

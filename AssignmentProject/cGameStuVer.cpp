@@ -58,13 +58,13 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	theAreaClicked = { 0, 0 };
 	// Store the textures
-	textureName = { "sea", "bottle", "ship","theBackground", "OpeningScreen", "ClosingScreen"};
-	texturesToUse = { "Images/Sprites/sea64x64.png", "Images/Sprites/Bottle64x64.png", "Images/Sprites/shipGreen64x64.png", "Images/Bkg/Bkgnd.png", "Images/Bkg/OpeningScreenF.png", "Images/Bkg/ClosingScreenF.png" };
+	textureName = { "sky", "enemy", "player", "playerAttack1", "playerAttack2", "theBackground", "OpeningScreen", "ClosingScreen"};
+	texturesToUse = { "Images/Sprites/sky64x64.png", "Images/Sprites/Enemy.png", "Images/Sprites/darkChar.png", "Images/Sprites/darkCharAttack1.png", "Images/Sprites/darkCharAttack2.png","Images/Bkg/Bkgnd.jpg", "Images/Bkg/OpeningScreenF.jpg", "Images/Bkg/ClosingScreenF.jpg" };
 	for (unsigned int tCount = 0; tCount < textureName.size(); tCount++)
 	{	
 		theTextureMgr->addTexture(textureName[tCount], texturesToUse[tCount]);
 	}
-	tempTextTexture = theTextureMgr->getTexture("sea");
+	tempTextTexture = theTextureMgr->getTexture("sky");
 	aRect = { 0, 0, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 	aColour = { 228, 213, 238, 255 };
 	// Store the textures
@@ -93,8 +93,8 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 48);
 	}
 	// Create text Textures
-	gameTextNames = { "TitleTxt", "CollectTxt", "InstructTxt", "ThanksTxt", "SeeYouTxt","BottleCount"};
-	gameTextList = { "Stomp", "Defeat the enemies!", "Use the Left & Right arrow keys to move.", "Thanks for playing!", "See you again soon!", "Collected: "};
+	gameTextNames = { "TitleTxt", "CollectTxt", "InstructTxt", "InstructTxt2", "ThanksTxt", "SeeYouTxt","EnemyCount"};
+	gameTextList = { "Stomp", "Defeat the enemies!", "Use the Left & Right arrow keys to move.", "Use the SPACEBAR to Stomp!", "Thanks for playing!", "See you next time!", "Score: "};
 	for (unsigned int text = 0; text < gameTextNames.size(); text++)
 	{
 		if (text == 0)
@@ -122,15 +122,15 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("OpeningScreen")->getTWidth(), theTextureMgr->getTexture("OpeningScreen")->getTHeight());
 
 	theTileMap.setMapStartXY({ 150, 100 });
-	theShip.setMapPosition(0, 1);
-	theBottle.setMapPosition(1, 2);
-	theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
-	theTileMap.update(theBottle.getMapPosition(), 2, theBottle.getBottleRotation());
+	thePlayer.setMapPosition(0, 1);
+	theEnemy.setMapPosition(1, 2);
+	theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
+	theTileMap.update(theEnemy.getMapPosition(), 2, theEnemy.getEnemyRotation());
 
-	bottlesCollected = 0;
+	Score = 0;
 	strScore = gameTextList[gameTextList.size() - 1];
-	strScore += to_string(bottlesCollected).c_str();
-	theTextureMgr->deleteTexture("BottleCount");
+	strScore += to_string(Score).c_str();
+	theTextureMgr->deleteTexture("EnemyCount");
 }
 
 void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
@@ -155,7 +155,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	{
 	case gameState::menu:
 	{
-		theSoundMgr->getSnd("menuTheme")->play(-1);
+		
 		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 		// Render the Title
 		spriteBkgd.setSpritePos({ 0, 0 });
@@ -171,10 +171,16 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		tempTextTexture = theTextureMgr->getTexture("InstructTxt");
 		pos = { 50, 175, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		tempTextTexture = theTextureMgr->getTexture("InstructTxt2");
+		pos = { 50, 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		// Render Button
+		theButtonMgr->getBtn("play_btn")->setSpritePos({ 300, 500 });
 		theButtonMgr->getBtn("play_btn")->render(theRenderer, &theButtonMgr->getBtn("play_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("play_btn")->getSpritePos(), theButtonMgr->getBtn("play_btn")->getSpriteScale());
-		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 400, 375 });
+		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 600, 500 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
+	
+		
 	}
 	break;
 	case gameState::playing:
@@ -188,8 +194,8 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
 		pos = { 10, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
-		theTextureMgr->addTexture("BottleCount", theFontMgr->getFont("pirate")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
-		tempTextTexture = theTextureMgr->getTexture("BottleCount");
+		theTextureMgr->addTexture("EnemyCount", theFontMgr->getFont("pirate")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
+		tempTextTexture = theTextureMgr->getTexture("EnemyCount");
 		pos = { 600, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		theTileMap.render(theSDLWND, theRenderer, theTextureMgr, textureName);
@@ -257,23 +263,26 @@ void cGame::update(double deltaTime)
 	theGameState = theButtonMgr->getBtn("play_btn")->update(theGameState, gameState::playing, theAreaClicked);
 	theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, gameState::menu, theAreaClicked);
 
-	// Check if ship has collided with the bottle
-	if ((theShip.getMapPosition().C == theBottle.getMapPosition().C) && theShip.getMapPosition().R == (theBottle.getMapPosition().R)-1)
+	// Check if Player has collided with the Enemy
+	if (thePlayer.isStomping == true) 
 	{
-		if (theShip.isStomping == true) {
-			bottlesCollected++;
+		if ((thePlayer.getMapPosition().C == theEnemy.getMapPosition().C) && thePlayer.getMapPosition().R == (theEnemy.getMapPosition().R) - 1)
+		{
+			Score++;
 			theSoundMgr->getSnd("stompHit")->play(0);
 			strScore = gameTextList[gameTextList.size() - 1];
-			strScore += to_string(bottlesCollected).c_str();
-			theTextureMgr->deleteTexture("BottleCount");
-			theBottle.genRandomPos(theShip.getMapPosition().R, theShip.getMapPosition().C);
-			theTileMap.update(theBottle.getMapPosition(), 2, theBottle.getBottleRotation());
-			theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
-			theShip.isStomping = false;
-			
+			strScore += to_string(Score).c_str();
+			theTextureMgr->deleteTexture("EnemyCount");
+			theEnemy.genRandomPos(thePlayer.getMapPosition().R, thePlayer.getMapPosition().C);
+			theTileMap.update(theEnemy.getMapPosition(), 2, theEnemy.getEnemyRotation());
+			theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
+			thePlayer.isStomping = false;
 		}
 	}
+		if (theGameState == gameState::menu)
+			theSoundMgr->getSnd("menuTheme")->play(0);
 }
+
 
 bool cGame::getInput(bool theLoop)
 {
@@ -371,12 +380,12 @@ bool cGame::getInput(bool theLoop)
 				case SDLK_RIGHT:
 				{
 					if (theGameState == gameState::playing)
-						if (theShip.getMapPosition().C < 2)
+						if (thePlayer.getMapPosition().C < 2)
 						{
-							theTileMap.update(theShip.getMapPosition(), 1, theShip.getShipRotation());
-							theShip.setMapPosition(theShip.getMapPosition().R, theShip.getMapPosition().C + 1);
-							theShip.setShipRotation(270);
-							theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
+							theTileMap.update(thePlayer.getMapPosition(), 1, thePlayer.getPlayerRotation());
+							thePlayer.setMapPosition(thePlayer.getMapPosition().R, thePlayer.getMapPosition().C + 1);
+							thePlayer.setPlayerRotation(0);
+							theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
 						}
 				}
 				break;
@@ -384,23 +393,33 @@ bool cGame::getInput(bool theLoop)
 				case SDLK_LEFT:
 				{
 					if (theGameState == gameState::playing)
-						if (theShip.getMapPosition().C > 0)
+						if (thePlayer.getMapPosition().C > 0)
 						{
-							theTileMap.update(theShip.getMapPosition(), 1, theShip.getShipRotation());
-							theShip.setMapPosition(theShip.getMapPosition().R, theShip.getMapPosition().C - 1);
-							theShip.setShipRotation(90);
-							theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
+							theTileMap.update(thePlayer.getMapPosition(), 1, thePlayer.getPlayerRotation());
+							thePlayer.setMapPosition(thePlayer.getMapPosition().R, thePlayer.getMapPosition().C - 1);
+							thePlayer.setPlayerRotation(0);
+							theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
 						}
 				}
 				break;
 				case SDLK_SPACE:
 				{
 					if (theGameState == gameState::playing)
-						if (theShip.getMapPosition().C >= 0)
+					{
+						if (thePlayer.getMapPosition().C >= 0)
 						{
-							theShip.isStomping = true;
+							thePlayer.setTexture(theTextureMgr->getTexture("playerAttack1"));
+							//Sleep(500);
+							thePlayer.setTexture(theTextureMgr->getTexture("playerAttack2"));
+							thePlayer.isStomping = true;
 							theSoundMgr->getSnd("stomp")->play(0);
+
 						}
+						else
+						{
+							thePlayer.isStomping = false;
+						}
+					}
 				}
 				break;
 				default:

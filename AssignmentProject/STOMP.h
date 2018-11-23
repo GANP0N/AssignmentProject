@@ -10,5 +10,5 @@
 #include "cSprite.h"
 #include "cTileMap.h"
 #include "cButton.h"
-#include "cShip.h"
-#include "cBottle.h"
+#include "cPlayer.h"
+#include "cEnemy.h"

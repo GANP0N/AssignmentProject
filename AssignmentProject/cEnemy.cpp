@@ -1,4 +1,4 @@
-#include "cBottle.h"
+#include "cEnemy.h"
 
 
 /*
@@ -6,37 +6,37 @@
 Defualt Constructor
 =================================================================
 */
-cBottle::cBottle()
+cEnemy::cEnemy()
 {
 	this->setMapPosition(this->spriteRandom(gen), this->spriteRandom(gen));
 }
-void cBottle::update(int row, int column)
+void cEnemy::update(int row, int column)
 {
 	this->setMapPosition(column, row);
 }
 
-void cBottle::setMapPosition(int row, int column)
+void cEnemy::setMapPosition(int row, int column)
 {
-	this->bottlePos = { column, row };
+	this->enemyPos = { column, row };
 }
 
-MapRC cBottle::getMapPosition()
+MapRC cEnemy::getMapPosition()
 {
-	return this->bottlePos;
+	return this->enemyPos;
 }
 
-void cBottle::setBottleRotation(float angle)
+void cEnemy::setEnemyRotation(float angle)
 {
-	this->bottleRotation = angle;
+	this->enemyRotation = angle;
 	this->setSpriteRotAngle(angle);
 }
 
-float cBottle::getBottleRotation()
+float cEnemy::getEnemyRotation()
 {
-	return this->bottleRotation;
+	return this->enemyRotation;
 }
 
-void cBottle::genRandomPos(int row, int column)
+void cEnemy::genRandomPos(int row, int column)
 {
 
 	while (this->getMapPosition().C == column && this->getMapPosition().R == row)
@@ -52,6 +52,6 @@ Defualt Destructor
 */
 
 
-cBottle::~cBottle()
+cEnemy::~cEnemy()
 {
 }

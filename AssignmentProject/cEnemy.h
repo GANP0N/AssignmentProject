@@ -1,6 +1,6 @@
 /*
 =================
-- cBottle.cpp
+- cEnemy.cpp
 - Header file for class definition - IMPLEMENTATION
 =================
 */
@@ -8,24 +8,24 @@
 #include "cSprite.h"
 #include <random>
 
-class cBottle :	public cSprite
+class cEnemy :	public cSprite
 {
 private:
-	MapRC bottlePos;
-	float bottleRotation;
+	MapRC enemyPos;
+	float enemyRotation;
 	/* Let the computer pick a random number */
 	random_device rd;    // non-deterministic engine 
 	mt19937 gen{ rd() }; // deterministic engine. For most common uses, std::mersenne_twister_engine, fast and high-quality.
 	uniform_int_distribution<> spriteRandom{ 0, 9 };
 
 public:
-	cBottle();
-	virtual ~cBottle();
+	cEnemy();
+	virtual ~cEnemy();
 	void update(int row, int column);
 	void setMapPosition(int row, int column);
 	MapRC getMapPosition();
-	void setBottleRotation(float angle);
-	float getBottleRotation();
+	void setEnemyRotation(float angle);
+	float getEnemyRotation();
 	void genRandomPos(int row, int column);
 };
 

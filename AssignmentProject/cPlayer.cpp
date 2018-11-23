@@ -1,10 +1,10 @@
 /*
 =================
-- cShip.cpp
+- cPlayer.cpp
 - Header file for class definition - IMPLEMENTATION
 =================
 */
-#include "cShip.h"
+#include "cPlayer.h"
 
 
 /*
@@ -12,35 +12,35 @@
 Defualt Constructor
 =================================================================
 */
-cShip::cShip()
+cPlayer::cPlayer()
 {
 	this->setMapPosition( 0, 0 );
 }
 
-void cShip::update(int row, int column)
+void cPlayer::update(int row, int column)
 {
 	this->setMapPosition(column, row );
 }
 
-void cShip::setMapPosition(int row, int column)
+void cPlayer::setMapPosition(int row, int column)
 {
-	this->shipPos = { column, row };
+	this->playerPos = { column, row };
 }
 
-MapRC cShip::getMapPosition()
+MapRC cPlayer::getMapPosition()
 {
-	return this->shipPos;
+	return this->playerPos;
 }
 
-void cShip::setShipRotation(float angle)
+void cPlayer::setPlayerRotation(float angle)
 {
-	this->shipRotation = angle;
+	this->playerRotation = angle;
 	this->setSpriteRotAngle(angle);
 }
 
-float cShip::getShipRotation()
+float cPlayer::getPlayerRotation()
 {
-	return this->shipRotation;
+	return this->playerRotation;
 }
 
 
@@ -50,6 +50,6 @@ float cShip::getShipRotation()
 Defualt Destructor
 =================================================================
 */
-cShip::~cShip()
+cPlayer::~cPlayer()
 {
 }
