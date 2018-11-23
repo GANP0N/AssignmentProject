@@ -86,24 +86,24 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theGameState = gameState::menu;
 	theBtnType = btnTypes::exit;
 	// Create textures for Game Dialogue (text)
-	fontList = { "pirate", "skeleton" };
-	fontsToUse = { "Fonts/BlackPearl.ttf", "Fonts/SkeletonCloset.ttf" };
+	fontList = { "germania", "truelies" };
+	fontsToUse = { "Fonts/Germania.ttf", "Fonts/TrueLies.ttf" };
 	for (unsigned int fonts = 0; fonts < fontList.size(); fonts++)
 	{
 		theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 48);
 	}
 	// Create text Textures
 	gameTextNames = { "TitleTxt", "CollectTxt", "InstructTxt", "InstructTxt2", "ThanksTxt", "SeeYouTxt","EnemyCount"};
-	gameTextList = { "Stomp", "Defeat the enemies!", "Use the Left & Right arrow keys to move.", "Use the SPACEBAR to Stomp!", "Thanks for playing!", "See you next time!", "Score: "};
+	gameTextList = { "STOMP", "Defeat the enemies!", "Use the Left & Right arrow keys to move.", "Use the SPACEBAR to Stomp!", "Thanks for playing!", "See you next time!", "Score: "};
 	for (unsigned int text = 0; text < gameTextNames.size(); text++)
 	{
 		if (text == 0)
 		{
-			theTextureMgr->addTexture(gameTextNames[text], theFontMgr->getFont("pirate")->createTextTexture(theRenderer, gameTextList[text], textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
+			theTextureMgr->addTexture(gameTextNames[text], theFontMgr->getFont("truelies")->createTextTexture(theRenderer, gameTextList[text], textType::solid, { 175, 0, 0, 255 }, { 0, 0, 0, 0 }));
 		}
 		else
 		{
-			theTextureMgr->addTexture(gameTextNames[text], theFontMgr->getFont("skeleton")->createTextTexture(theRenderer, gameTextList[text], textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
+			theTextureMgr->addTexture(gameTextNames[text], theFontMgr->getFont("germania")->createTextTexture(theRenderer, gameTextList[text], textType::solid, { 0, 0, 90, 255 }, { 0, 0, 0, 0 }));
 		}
 	}
 	// Load game sounds
@@ -114,8 +114,6 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	{
 		theSoundMgr->add(soundList[sounds], soundsToUse[sounds], soundTypes[sounds]);
 	}
-
-
 
 	spriteBkgd.setSpritePos({ 0, 0 });
 	spriteBkgd.setTexture(theTextureMgr->getTexture("OpeningScreen"));
@@ -131,10 +129,13 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	strScore = gameTextList[gameTextList.size() - 1];
 	strScore += to_string(Score).c_str();
 	theTextureMgr->deleteTexture("EnemyCount");
+
+	
 }
 
 void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
+	
 	loop = true;
 
 	while (loop)
@@ -162,22 +163,22 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		spriteBkgd.setTexture(theTextureMgr->getTexture("OpeningScreen"));
 		spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("OpeningScreen")->getTWidth(), theTextureMgr->getTexture("OpeningScreen")->getTHeight());
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
-		pos = { 10, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 300, 25, tempTextTexture->getTextureRect().w + 200, tempTextTexture->getTextureRect().h + 100 };
 		scale = { 1, 1 };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		tempTextTexture = theTextureMgr->getTexture("CollectTxt");
-		pos = { 50, 100, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 50, 200, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		tempTextTexture = theTextureMgr->getTexture("InstructTxt");
-		pos = { 50, 175, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 50, 275, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		tempTextTexture = theTextureMgr->getTexture("InstructTxt2");
-		pos = { 50, 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 50, 400, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		// Render Button
-		theButtonMgr->getBtn("play_btn")->setSpritePos({ 300, 500 });
+		theButtonMgr->getBtn("play_btn")->setSpritePos({ 300, 600 });
 		theButtonMgr->getBtn("play_btn")->render(theRenderer, &theButtonMgr->getBtn("play_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("play_btn")->getSpritePos(), theButtonMgr->getBtn("play_btn")->getSpriteScale());
-		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 600, 500 });
+		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 600, 600 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 	
 		
@@ -185,47 +186,49 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	break;
 	case gameState::playing:
 	{
-		
-		theSoundMgr->getSnd("gameTheme")->play(-1);
+
+	
 		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 		spriteBkgd.setSpritePos({ 0, 0 });
 		spriteBkgd.setTexture(theTextureMgr->getTexture("theBackground"));
 		spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBackground")->getTWidth(), theTextureMgr->getTexture("OpeningScreen")->getTHeight());
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
-		pos = { 10, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 400, 20, tempTextTexture->getTextureRect().w + 30, tempTextTexture->getTextureRect().h + 15 };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
-		theTextureMgr->addTexture("EnemyCount", theFontMgr->getFont("pirate")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 44, 203, 112, 255 }, { 0, 0, 0, 0 }));
+		theTextureMgr->addTexture("EnemyCount", theFontMgr->getFont("germania")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 0, 0, 95, 255 }, { 0, 0, 0, 0 }));
 		tempTextTexture = theTextureMgr->getTexture("EnemyCount");
-		pos = { 600, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 700, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		theTileMap.render(theSDLWND, theRenderer, theTextureMgr, textureName);
 		theTileMap.renderGridLines(theRenderer, aRect, aColour);
 		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 850, 600 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 	}
+	theSoundMgr->getSnd("gameTheme")->play(-1);
 	break;
 	case gameState::end:
 	{
-		theSoundMgr->getSnd("exitTheme")->play(-1);
+		
 		spriteBkgd.setSpritePos({ 0, 0 });
 		spriteBkgd.setTexture(theTextureMgr->getTexture("ClosingScreen"));
 		spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("ClosingScreen")->getTWidth(), theTextureMgr->getTexture("OpeningScreen")->getTHeight());
 
 		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
-		pos = { 10, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 400, 20, tempTextTexture->getTextureRect().w + 30, tempTextTexture->getTextureRect().h + 15};
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		tempTextTexture = theTextureMgr->getTexture("ThanksTxt");
-		pos = { 50, 100, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 325, 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		tempTextTexture = theTextureMgr->getTexture("SeeYouTxt");
-		pos = { 50, 175, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 335, 375, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
-		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 500, 500 });
+		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 450, 500 });
 		theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale());
-		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 500, 575 });
+		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 458, 575 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 	}
+	theSoundMgr->getSnd("exitTheme")->play(-1);
 	break;
 	case gameState::quit:
 	{
@@ -264,7 +267,7 @@ void cGame::update(double deltaTime)
 	theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, gameState::menu, theAreaClicked);
 
 	// Check if Player has collided with the Enemy
-	if (thePlayer.isStomping == true) 
+	if (thePlayer.isStomping == true)
 	{
 		if ((thePlayer.getMapPosition().C == theEnemy.getMapPosition().C) && thePlayer.getMapPosition().R == (theEnemy.getMapPosition().R) - 1)
 		{
@@ -279,8 +282,7 @@ void cGame::update(double deltaTime)
 			thePlayer.isStomping = false;
 		}
 	}
-		if (theGameState == gameState::menu)
-			theSoundMgr->getSnd("menuTheme")->play(0);
+
 }
 
 
@@ -351,32 +353,7 @@ bool cGame::getInput(bool theLoop)
 				case SDLK_ESCAPE:
 					theLoop = false;
 					break;
-				/*case SDLK_DOWN:
-				{
-						if(theGameState == gameState::playing)
-							if (theShip.getMapPosition().R < 9)
-							{
-								theTileMap.update(theShip.getMapPosition(), 1, theShip.getShipRotation());
-								theShip.setMapPosition(theShip.getMapPosition().R + 1, theShip.getMapPosition().C);
-								theShip.setShipRotation(0);
-								theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
-							}
-				}
-				break;
-				
-				case SDLK_UP:
-				{
-					if (theGameState == gameState::playing)
-						if (theShip.getMapPosition().R > 0)
-						{
-							theTileMap.update(theShip.getMapPosition(), 1, theShip.getShipRotation());
-							theShip.setMapPosition(theShip.getMapPosition().R - 1, theShip.getMapPosition().C);
-							theShip.setShipRotation(180);
-							theTileMap.update(theShip.getMapPosition(), 3, theShip.getShipRotation());
-						}
-				}
-				break;
-				*/
+
 				case SDLK_RIGHT:
 				{
 					if (theGameState == gameState::playing)
@@ -408,9 +385,9 @@ bool cGame::getInput(bool theLoop)
 					{
 						if (thePlayer.getMapPosition().C >= 0)
 						{
-							thePlayer.setTexture(theTextureMgr->getTexture("playerAttack1"));
-							//Sleep(500);
-							thePlayer.setTexture(theTextureMgr->getTexture("playerAttack2"));
+							theTileMap.update(thePlayer.getMapPosition(), 4, thePlayer.getPlayerRotation());
+							Sleep(500);
+							theTileMap.update(thePlayer.getMapPosition(), 5, thePlayer.getPlayerRotation());
 							thePlayer.isStomping = true;
 							theSoundMgr->getSnd("stomp")->play(0);
 
@@ -418,6 +395,7 @@ bool cGame::getInput(bool theLoop)
 						else
 						{
 							thePlayer.isStomping = false;
+							theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
 						}
 					}
 				}
