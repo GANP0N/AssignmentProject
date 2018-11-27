@@ -121,6 +121,11 @@ void cTileMap::update(MapRC mapPos, int theItemToPlace, float rotation)
 	this->tileMap[mapPos.R][mapPos.C] = theItemToPlace;
 	this->setTileRotation(rotation);
 }
+
+void cTileMap::updateEnemy(MapRC mapPos, int theItemToPlace)
+{
+	this->tileMap[mapPos.R][mapPos.C] = theItemToPlace;
+}
 /*
 =================================================================
 - Set the initial values for the map

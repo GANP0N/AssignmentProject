@@ -119,9 +119,9 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	spriteBkgd.setTexture(theTextureMgr->getTexture("OpeningScreen"));
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("OpeningScreen")->getTWidth(), theTextureMgr->getTexture("OpeningScreen")->getTHeight());
 
-	theTileMap.setMapStartXY({ 150, 100 });
+	theTileMap.setMapStartXY({ 310, 100 });
 	thePlayer.setMapPosition(0, 1);
-	theEnemy.setMapPosition(1, 2);
+	theEnemy.setMapPosition(8, 2);
 	theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
 	theTileMap.update(theEnemy.getMapPosition(), 2, theEnemy.getEnemyRotation());
 
@@ -130,7 +130,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	strScore += to_string(Score).c_str();
 	theTextureMgr->deleteTexture("EnemyCount");
 
-	
+	theSoundMgr->getSnd("gameTheme")->play(-1);
 }
 
 void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
@@ -204,7 +204,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 850, 600 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 	}
-	theSoundMgr->getSnd("gameTheme")->play(-1);
+	
 	break;
 	case gameState::end:
 	{
@@ -212,6 +212,12 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		spriteBkgd.setSpritePos({ 0, 0 });
 		spriteBkgd.setTexture(theTextureMgr->getTexture("ClosingScreen"));
 		spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("ClosingScreen")->getTWidth(), theTextureMgr->getTexture("OpeningScreen")->getTHeight());
+		
+		/*theTextureMgr->deleteTexture("EnemyCount");
+		theTextureMgr->addTexture("EnemyCount", theFontMgr->getFont("germania")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 0, 0, 95, 255 }, { 0, 0, 0, 0 }));
+		tempTextTexture = theTextureMgr->getTexture("EnemyCount");
+		pos = { 700, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };*/
+		
 
 		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
@@ -228,7 +234,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 458, 575 });
 		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale());
 	}
-	theSoundMgr->getSnd("exitTheme")->play(-1);
+	
 	break;
 	case gameState::quit:
 	{
@@ -249,11 +255,23 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer, double rotA
 
 void cGame::update()
 {
-
+	
 }
 
 void cGame::update(double deltaTime)
 {
+	if (theGameState == gameState::playing)
+
+	{
+		timer++;
+
+		if (timer > 60)
+		{
+			timer = 0;
+		}
+	}
+
+	cout << "time elapsed: " << timer << endl;
 	// CHeck Button clicked and change state
 	if (theGameState == gameState::menu || theGameState == gameState::end)
 	{
@@ -282,6 +300,18 @@ void cGame::update(double deltaTime)
 			thePlayer.isStomping = false;
 		}
 	}
+
+	if (theGameState == gameState::playing)
+		
+		if (timer == 60)
+	{
+		theTileMap.updateEnemy(theEnemy.getMapPosition(), 1);
+		theEnemy.setMapPosition(theEnemy.getMapPosition().R - 1, theEnemy.getMapPosition().C);
+		theTileMap.updateEnemy(theEnemy.getMapPosition(), 2);
+		getElapsedSeconds();
+	}
+	
+	
 
 }
 
@@ -386,11 +416,11 @@ bool cGame::getInput(bool theLoop)
 						if (thePlayer.getMapPosition().C >= 0)
 						{
 							theTileMap.update(thePlayer.getMapPosition(), 4, thePlayer.getPlayerRotation());
-							Sleep(500);
+						
 							theTileMap.update(thePlayer.getMapPosition(), 5, thePlayer.getPlayerRotation());
 							thePlayer.isStomping = true;
 							theSoundMgr->getSnd("stomp")->play(0);
-
+							
 						}
 						else
 						{

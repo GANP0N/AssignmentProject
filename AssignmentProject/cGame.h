@@ -41,6 +41,8 @@ private:
 	duration< double > deltaTime;
 	bool loop;
 
+	int timer;
+
 	// Sprites for displaying background and rocket textures
 	cSprite spriteBkgd;
 	// game related variables

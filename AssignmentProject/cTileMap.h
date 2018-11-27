@@ -13,7 +13,7 @@ cTileMap.h
 class cTileMap: public cSprite
 {
 protected:
-	int tileMap[6][3];
+	int tileMap[9][3];
 
 private:
 	SDL_Point mapStartXY;
@@ -29,6 +29,7 @@ public:
 	void renderGridLines(SDL_Renderer* theRenderer, SDL_Rect theRect, SDL_Color theColour); // Draw grid lines
 	void update(SDL_Point theMapAreaClicked, int theTileToPlace);
 	void update(MapRC mapPos, int theItemToPlace, float rotation);
+	void updateEnemy(MapRC mapPos, int theItemToPlace);
 	void setMapStartXY(SDL_Point startPosXY);
 	SDL_Point getMapStartXY();
 	void setTileRotation(float rotation);

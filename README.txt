@@ -14,3 +14,9 @@ StompHit SFX obtained from freesound.org and modified by myself, Oliver Threlfal
 Exit Screen Music from Bensound.com: https://www.bensound.com/royalty-free-music/track/straight
 
 Dark Soldier placeholder sprite: https://opengameart.org/content/dark-soldier-for-valyria-tear
+
+Main Menu Sky Background from pexels.com: https://www.pexels.com/photo/blue-sky-blur-clear-sky-color-281260/
+
+In game Sky Background from pixabay.com: https://pixabay.com/en/sky-background-nature-blue-clouds-1286888/
+
+Exit Sky baground from pexels.com: https://www.pexels.com/photo/white-clouds-and-blue-sky-907485/
