@@ -126,6 +126,16 @@ void cTileMap::updateEnemy(MapRC mapPos, int theItemToPlace)
 {
 	this->tileMap[mapPos.R][mapPos.C] = theItemToPlace;
 }
+
+void cTileMap::updateEnemy2(MapRC mapPos, int theItemToPlace)
+{
+	this->tileMap[mapPos.R][mapPos.C] = theItemToPlace;
+}
+
+void cTileMap::updateEnemy3(MapRC mapPos, int theItemToPlace)
+{
+	this->tileMap[mapPos.R][mapPos.C] = theItemToPlace;
+}
 /*
 =================================================================
 - Set the initial values for the map

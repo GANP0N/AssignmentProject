@@ -41,7 +41,10 @@ private:
 	duration< double > deltaTime;
 	bool loop;
 
-	int timer;
+	//For the speed at which the enemies will move dependant on time.
+	int enemyTimerSlow;
+	int enemyTimerMedi;
+	int enemyTimerFast;
 
 	// Sprites for displaying background and rocket textures
 	cSprite spriteBkgd;
@@ -81,6 +84,8 @@ private:
 	SDL_Point theAreaClicked;
 	cPlayer thePlayer;
 	cEnemy theEnemy;
+	cEnemy theEnemy2;
+	cEnemy theEnemy3;
 	int Score;
 	string strScore;
 };

@@ -13,6 +13,10 @@ public:
 	MapRC getMapPosition();
 	void setPlayerRotation(float angle);
 	float getPlayerRotation();
-	bool  isStomping;
+	bool isStomping;
+	bool stompTimer1; //Timer until initialisation of the stomp
+	bool stompTimer2; //Timer until the end of the stomp
+	int stompTime1; //How long the stomp takes to startup
+	int stompTime2; //How long the stomp should stay active for
 };
 

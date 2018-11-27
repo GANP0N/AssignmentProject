@@ -122,8 +122,12 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTileMap.setMapStartXY({ 310, 100 });
 	thePlayer.setMapPosition(0, 1);
 	theEnemy.setMapPosition(8, 2);
+	theEnemy2.setMapPosition(8, 1);
+	theEnemy3.setMapPosition(8, 0);
 	theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
 	theTileMap.update(theEnemy.getMapPosition(), 2, theEnemy.getEnemyRotation());
+	theTileMap.update(theEnemy2.getMapPosition(), 2, theEnemy2.getEnemyRotation());
+	theTileMap.update(theEnemy3.getMapPosition(), 2, theEnemy3.getEnemyRotation());
 
 	Score = 0;
 	strScore = gameTextList[gameTextList.size() - 1];
@@ -131,6 +135,8 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTextureMgr->deleteTexture("EnemyCount");
 
 	theSoundMgr->getSnd("gameTheme")->play(-1);
+
+	
 }
 
 void cGame::run(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
@@ -186,7 +192,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	break;
 	case gameState::playing:
 	{
-
+		
 	
 		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 		spriteBkgd.setSpritePos({ 0, 0 });
@@ -260,19 +266,59 @@ void cGame::update()
 
 void cGame::update(double deltaTime)
 {
+	//Measures each 60 frames, equivalent to 1 second passed
 	if (theGameState == gameState::playing)
-
 	{
-		timer++;
 
-		if (timer > 60)
+		enemyTimerSlow++;
+		//enemyTimerMedi++;
+		//enemyTimerFast++;
+
+		if (enemyTimerSlow > 48)
 		{
-			timer = 0;
+			enemyTimerSlow = 0;
 		}
+
+		/*if (enemyTimerMedi > 40)
+		{
+			enemyTimerMedi = 0;
+		}
+
+		if (enemyTimerFast > 25)
+		{
+			enemyTimerFast = 0;
+		}*/
 	}
 
-	cout << "time elapsed: " << timer << endl;
-	// CHeck Button clicked and change state
+	if (thePlayer.stompTimer1 == true)
+	{
+		thePlayer.stompTime1++;
+		thePlayer.stompTime2++;
+		if (thePlayer.stompTime1 == 16)
+		{
+			theTileMap.update(thePlayer.getMapPosition(), 5, thePlayer.getPlayerRotation());
+			thePlayer.isStomping = true;
+			thePlayer.stompTimer2 = true;
+			theSoundMgr->getSnd("stomp")->play(0);
+			
+			
+		}
+
+		cout << "time elapsed: " << thePlayer.stompTime2 << endl;
+		if (thePlayer.stompTime2 == 30)
+		{
+			theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
+			thePlayer.isStomping = false;
+			thePlayer.stompTime1 = 0;
+			thePlayer.stompTime2 = 0;
+			thePlayer.stompTimer1 = false;
+			thePlayer.stompTimer2 = false;
+		}
+
+	}
+
+
+	// Check Button clicked and change state
 	if (theGameState == gameState::menu || theGameState == gameState::end)
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, gameState::quit, theAreaClicked);
@@ -294,24 +340,34 @@ void cGame::update(double deltaTime)
 			strScore = gameTextList[gameTextList.size() - 1];
 			strScore += to_string(Score).c_str();
 			theTextureMgr->deleteTexture("EnemyCount");
-			theEnemy.genRandomPos(thePlayer.getMapPosition().R, thePlayer.getMapPosition().C);
+			theTileMap.update(theEnemy.getMapPosition(), 1, theEnemy.getEnemyRotation());
+			theEnemy.setMapPosition(9, 2);
 			theTileMap.update(theEnemy.getMapPosition(), 2, theEnemy.getEnemyRotation());
-			theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
-			thePlayer.isStomping = false;
 		}
 	}
 
 	if (theGameState == gameState::playing)
 		
-		if (timer == 60)
-	{
+		if (enemyTimerSlow == 48)
+		{
 		theTileMap.updateEnemy(theEnemy.getMapPosition(), 1);
 		theEnemy.setMapPosition(theEnemy.getMapPosition().R - 1, theEnemy.getMapPosition().C);
 		theTileMap.updateEnemy(theEnemy.getMapPosition(), 2);
-		getElapsedSeconds();
-	}
-	
-	
+		}
+
+		/*if (enemyTimerMedi == 40)
+		{
+			theTileMap.updateEnemy2(theEnemy2.getMapPosition(), 1);
+			theEnemy.setMapPosition(theEnemy2.getMapPosition().R - 1, theEnemy2.getMapPosition().C);
+			theTileMap.updateEnemy2(theEnemy2.getMapPosition(), 2);
+		}
+
+		if (enemyTimerFast == 25)
+		{
+			theTileMap.updateEnemy3(theEnemy3.getMapPosition(), 1);
+			theEnemy.setMapPosition(theEnemy3.getMapPosition().R - 1, theEnemy3.getMapPosition().C);
+			theTileMap.updateEnemy3(theEnemy3.getMapPosition(), 2);
+		}*/
 
 }
 
@@ -413,14 +469,15 @@ bool cGame::getInput(bool theLoop)
 				{
 					if (theGameState == gameState::playing)
 					{
+
 						if (thePlayer.getMapPosition().C >= 0)
 						{
-							theTileMap.update(thePlayer.getMapPosition(), 4, thePlayer.getPlayerRotation());
-						
-							theTileMap.update(thePlayer.getMapPosition(), 5, thePlayer.getPlayerRotation());
-							thePlayer.isStomping = true;
-							theSoundMgr->getSnd("stomp")->play(0);
-							
+							//if (thePlayer.isStomping = false)
+							//{
+								theTileMap.update(thePlayer.getMapPosition(), 4, thePlayer.getPlayerRotation());
+								thePlayer.stompTimer1 = true;
+
+							//}
 						}
 						else
 						{
@@ -428,6 +485,7 @@ bool cGame::getInput(bool theLoop)
 							theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
 						}
 					}
+					
 				}
 				break;
 				default:

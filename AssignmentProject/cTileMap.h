@@ -30,6 +30,8 @@ public:
 	void update(SDL_Point theMapAreaClicked, int theTileToPlace);
 	void update(MapRC mapPos, int theItemToPlace, float rotation);
 	void updateEnemy(MapRC mapPos, int theItemToPlace);
+	void updateEnemy2(MapRC mapPos, int theItemToPlace);
+	void updateEnemy3(MapRC mapPos, int theItemToPlace);
 	void setMapStartXY(SDL_Point startPosXY);
 	SDL_Point getMapStartXY();
 	void setTileRotation(float rotation);

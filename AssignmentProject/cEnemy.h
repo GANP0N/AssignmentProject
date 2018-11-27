@@ -12,6 +12,8 @@ class cEnemy :	public cSprite
 {
 private:
 	MapRC enemyPos;
+	MapRC enemy2Pos;
+	MapRC enemy3Pos;
 	float enemyRotation;
 	/* Let the computer pick a random number */
 	random_device rd;    // non-deterministic engine 
