@@ -9,11 +9,13 @@ Wind SFX obtained from freesfx.co.uk: https://www.freesfx.co.uk/Category/Wind/53
 
 Stomp SFX obtained from freesound.org: https://freesound.org/people/darealwollen/sounds/368647/
 
-StompHit SFX obtained from freesound.org and modified by myself, Oliver Threlfall: https://freesound.org/people/AlienXXX/sounds/208455/
+StompHit SFX obtained from freesound.org: https://freesound.org/people/AlienXXX/sounds/208455/
+The above was modified by myself in the final build, Oliver Threlfall.
 
 Exit Screen Music from Bensound.com: https://www.bensound.com/royalty-free-music/track/straight
 
-Dark Soldier placeholder sprite: https://opengameart.org/content/dark-soldier-for-valyria-tear
+Dark Soldier player sprite: https://opengameart.org/content/dark-soldier-for-valyria-tear
+The above was modified by myself in the final build, Oliver Threlfall.
 
 Main Menu Sky Background from pexels.com: https://www.pexels.com/photo/blue-sky-blur-clear-sky-color-281260/
 
