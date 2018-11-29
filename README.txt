@@ -22,3 +22,5 @@ Main Menu Sky Background from pexels.com: https://www.pexels.com/photo/blue-sky-
 In game Sky Background from pixabay.com: https://pixabay.com/en/sky-background-nature-blue-clouds-1286888/
 
 Exit Sky baground from pexels.com: https://www.pexels.com/photo/white-clouds-and-blue-sky-907485/
+
+Move Left/Right SFX from freesound: https://freesound.org/people/sonictechtonic/sounds/243567/
