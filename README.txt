@@ -24,3 +24,5 @@ In game Sky Background from pixabay.com: https://pixabay.com/en/sky-background-n
 Exit Sky baground from pexels.com: https://www.pexels.com/photo/white-clouds-and-blue-sky-907485/
 
 Move Left/Right SFX from freesound: https://freesound.org/people/sonictechtonic/sounds/243567/
+
+Damage SFX from freesound: https://freesound.org/people/InspectorJ/sounds/448226/
