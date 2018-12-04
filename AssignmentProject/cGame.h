@@ -88,6 +88,8 @@ private:
 	cEnemy theEnemy3;
 	int Score;
 	string strScore;
+	int Chance;
+	string strChance;
 };
 
 #endif

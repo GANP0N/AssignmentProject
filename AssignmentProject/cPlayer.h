@@ -18,5 +18,6 @@ public:
 	bool stompTimer2; //Timer until the end of the stomp
 	int stompTime1; //How long the stomp takes to startup
 	int stompTime2; //How long the stomp should stay active for
+	bool isCaught = false;
 };
 

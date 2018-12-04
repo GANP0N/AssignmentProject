@@ -93,8 +93,8 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 48);
 	}
 	// Create text Textures
-	gameTextNames = { "TitleTxt", "CollectTxt", "InstructTxt", "InstructTxt2", "ThanksTxt", "SeeYouTxt","EnemyCount"};
-	gameTextList = { "STOMP", "Defeat the enemies!", "Use the Left & Right arrow keys to move.", "Use the SPACEBAR to Stomp!", "Thanks for playing!", "See you next time!", "Score: "};
+	gameTextNames = { "TitleTxt", "CollectTxt", "InstructTxt", "InstructTxt2", "GameOverTxt", "SeeYouTxt", "Missed", "MissedOutOf", "Score", "enemyCount", "chanceCount"};
+	gameTextList = { "STOMP", "Defeat the Robots when they're 1 tile below you!", "Use the Left & Right arrow keys to move.", "Use the SPACEBAR to Stomp!", "Game Over! You've Been Caught!", "See you next time!", "Missed: ", "/3", "Score: ", "Score: ", ""};
 	for (unsigned int text = 0; text < gameTextNames.size(); text++)
 	{
 		if (text == 0)
@@ -107,9 +107,9 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		}
 	}
 	// Load game sounds
-	soundList = { "menuTheme", "gameTheme", "exitTheme", "wind", "click", "stomp", "stompHit"};
-	soundTypes = { soundType::music, soundType::music, soundType::music, soundType::music, soundType::sfx, soundType::sfx, soundType::sfx};
-	soundsToUse = { "Audio/Theme/againstodds.wav", "Audio/Theme/bensound-extremeaction.wav", "Audio/Theme/bensound-straight.mp3", "Audio/Theme/Wind.wav", "Audio/SFX/ClickOn.wav", "Audio/SFX/Stomp.wav", "Audio/SFX/StompHit.wav"};
+	soundList = { "mainTheme", "wind", "click", "stomp", "stompHit", "roboOut", "move"};
+	soundTypes = { soundType::music, soundType::music, soundType::sfx, soundType::sfx, soundType::sfx, soundType::sfx , soundType::sfx};
+	soundsToUse = { "Audio/Theme/FastAce.wav", "Audio/Theme/Wind.wav", "Audio/SFX/ClickOn.wav", "Audio/SFX/Stomp.wav", "Audio/SFX/StompHit.wav", "Audio/SFX/roboOut.wav", "Audio/SFX/move.wav" };
 	for (unsigned int sounds = 0; sounds < soundList.size(); sounds++)
 	{
 		theSoundMgr->add(soundList[sounds], soundsToUse[sounds], soundTypes[sounds]);
@@ -132,9 +132,14 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	Score = 0;
 	strScore = gameTextList[gameTextList.size() - 1];
 	strScore += to_string(Score).c_str();
-	theTextureMgr->deleteTexture("EnemyCount");
+	theTextureMgr->deleteTexture("enemyCount");
 
-	theSoundMgr->getSnd("gameTheme")->play(-1);
+	Chance = 0;
+	strChance = gameTextList[gameTextList.size() - 1];
+	strChance += to_string(Chance).c_str();
+	theTextureMgr->deleteTexture("chanceCount");
+
+//	theSoundMgr->getSnd("mainTheme")->play(-1);
 
 	
 }
@@ -181,6 +186,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		tempTextTexture = theTextureMgr->getTexture("InstructTxt2");
 		pos = { 50, 400, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		
 		// Render Button
 		theButtonMgr->getBtn("play_btn")->setSpritePos({ 300, 600 });
 		theButtonMgr->getBtn("play_btn")->render(theRenderer, &theButtonMgr->getBtn("play_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("play_btn")->getSpritePos(), theButtonMgr->getBtn("play_btn")->getSpriteScale());
@@ -198,13 +204,33 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		spriteBkgd.setSpritePos({ 0, 0 });
 		spriteBkgd.setTexture(theTextureMgr->getTexture("theBackground"));
 		spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("theBackground")->getTWidth(), theTextureMgr->getTexture("OpeningScreen")->getTHeight());
+		
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
 		pos = { 400, 20, tempTextTexture->getTextureRect().w + 30, tempTextTexture->getTextureRect().h + 15 };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
-		theTextureMgr->addTexture("EnemyCount", theFontMgr->getFont("germania")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 0, 0, 95, 255 }, { 0, 0, 0, 0 }));
-		tempTextTexture = theTextureMgr->getTexture("EnemyCount");
-		pos = { 700, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+
+		tempTextTexture = theTextureMgr->getTexture("Missed");
+		pos = { 100, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h};
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
+		tempTextTexture = theTextureMgr->getTexture("Score");
+		pos = { 700, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h};
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
+		tempTextTexture = theTextureMgr->getTexture("MissedOutOf");
+		pos = { 275, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		
+		theTextureMgr->addTexture("enemyCount", theFontMgr->getFont("germania")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 95, 0, 0, 255 }, { 0, 0, 0, 0 }));
+		tempTextTexture = theTextureMgr->getTexture("enemyCount");
+		pos = { 825, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		
+		theTextureMgr->addTexture("chanceCount", theFontMgr->getFont("germania")->createTextTexture(theRenderer, strChance.c_str(), textType::solid, { 0, 0, 95, 255 }, { 0, 0, 0, 0 }));
+		tempTextTexture = theTextureMgr->getTexture("chanceCount");
+		pos = { 250, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
 		theTileMap.render(theSDLWND, theRenderer, theTextureMgr, textureName);
 		theTileMap.renderGridLines(theRenderer, aRect, aColour);
 		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 850, 600 });
@@ -214,27 +240,36 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	break;
 	case gameState::end:
 	{
-		
+
 		spriteBkgd.setSpritePos({ 0, 0 });
 		spriteBkgd.setTexture(theTextureMgr->getTexture("ClosingScreen"));
 		spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("ClosingScreen")->getTWidth(), theTextureMgr->getTexture("OpeningScreen")->getTHeight());
-		
-		/*theTextureMgr->deleteTexture("EnemyCount");
-		theTextureMgr->addTexture("EnemyCount", theFontMgr->getFont("germania")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 0, 0, 95, 255 }, { 0, 0, 0, 0 }));
-		tempTextTexture = theTextureMgr->getTexture("EnemyCount");
-		pos = { 700, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };*/
-		
-
 		spriteBkgd.render(theRenderer, NULL, NULL, spriteBkgd.getSpriteScale());
 		tempTextTexture = theTextureMgr->getTexture("TitleTxt");
 		pos = { 400, 20, tempTextTexture->getTextureRect().w + 30, tempTextTexture->getTextureRect().h + 15};
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
-		tempTextTexture = theTextureMgr->getTexture("ThanksTxt");
-		pos = { 325, 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
-		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
 		tempTextTexture = theTextureMgr->getTexture("SeeYouTxt");
-		pos = { 335, 375, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		pos = { 320, 275, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
+
+		tempTextTexture = theTextureMgr->getTexture("Score");
+		pos = { 400, 400, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
+		theTextureMgr->addTexture("enemyCount", theFontMgr->getFont("germania")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 95, 0, 0, 255 }, { 0, 0, 0, 0 }));
+		tempTextTexture = theTextureMgr->getTexture("enemyCount");
+		pos = { 525, 400, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
+		if (thePlayer.isCaught == true)
+		{
+			tempTextTexture = theTextureMgr->getTexture("GameOverTxt");
+			pos = { 200, 200, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		}
+
 		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 450, 500 });
 		theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale());
 		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 458, 575 });
@@ -255,7 +290,6 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer, double rotAngle, SDL_Point* spriteCentre)
 {
-
 	SDL_RenderPresent(theRenderer);
 }
 
@@ -266,20 +300,20 @@ void cGame::update()
 
 void cGame::update(double deltaTime)
 {
-	//Measures each 60 frames, equivalent to 1 second passed
+	//Measures set passed frames as a form of timer
 	if (theGameState == gameState::playing)
 	{
-
+		cout << "time elapsed: " << enemyTimerMedi << endl;
 		enemyTimerSlow++;
-		//enemyTimerMedi++;
-		//enemyTimerFast++;
-
+		enemyTimerMedi++;
+		enemyTimerFast++;
+		
 		if (enemyTimerSlow > 48)
 		{
 			enemyTimerSlow = 0;
 		}
 
-		/*if (enemyTimerMedi > 40)
+		if (enemyTimerMedi > 36)
 		{
 			enemyTimerMedi = 0;
 		}
@@ -287,8 +321,77 @@ void cGame::update(double deltaTime)
 		if (enemyTimerFast > 25)
 		{
 			enemyTimerFast = 0;
-		}*/
+		}
 	}
+
+	//Checks to see if Enemy has reached the player
+	if (theEnemy.getMapPosition().R == thePlayer.getMapPosition().R)
+	{
+		Chance++;
+		theSoundMgr->getSnd("roboOut")->play(0);
+		strChance = gameTextList[gameTextList.size() - 1];
+		strChance += to_string(Chance).c_str();
+		theTextureMgr->deleteTexture("chanceCount");
+		if (theEnemy.getMapPosition() == thePlayer.getMapPosition())
+		{
+			theTileMap.update(theEnemy.getMapPosition(), 3, theEnemy.getEnemyRotation());
+			theEnemy.setMapPosition(8, 2);
+			theTileMap.update(theEnemy.getMapPosition(), 2, theEnemy.getEnemyRotation());
+		}
+		else
+		{
+			theTileMap.update(theEnemy.getMapPosition(), 1, theEnemy.getEnemyRotation());
+			theEnemy.setMapPosition(8, 2);
+			theTileMap.update(theEnemy.getMapPosition(), 2, theEnemy.getEnemyRotation());
+		}
+	}
+
+
+	//Checks to see if Enemy2 has reached the player
+	if (theEnemy2.getMapPosition().R == thePlayer.getMapPosition().R)
+	{
+		Chance++;
+		theSoundMgr->getSnd("roboOut")->play(0);
+		strChance = gameTextList[gameTextList.size() - 1];
+		strChance += to_string(Chance).c_str();
+		theTextureMgr->deleteTexture("chanceCount"); 
+		if (theEnemy2.getMapPosition() == thePlayer.getMapPosition())
+		{
+			theTileMap.update(theEnemy2.getMapPosition(), 3, theEnemy2.getEnemyRotation());
+			theEnemy2.setMapPosition(8, 1);
+			theTileMap.update(theEnemy2.getMapPosition(), 2, theEnemy2.getEnemyRotation());
+		}
+		else
+		{
+			theTileMap.update(theEnemy2.getMapPosition(), 1, theEnemy2.getEnemyRotation());
+			theEnemy2.setMapPosition(8, 1);
+			theTileMap.update(theEnemy2.getMapPosition(), 2, theEnemy2.getEnemyRotation());
+		}
+	}
+
+	//Checks to see if Enemy3 has reached the player
+	if (theEnemy3.getMapPosition().R == thePlayer.getMapPosition().R)
+	{
+		Chance++;
+		theSoundMgr->getSnd("roboOut")->play(0);
+		strChance = gameTextList[gameTextList.size() - 1];
+		strChance += to_string(Chance).c_str();
+		theTextureMgr->deleteTexture("chanceCount");
+		if (theEnemy3.getMapPosition() == thePlayer.getMapPosition())
+		{
+			theTileMap.update(theEnemy3.getMapPosition(), 3, theEnemy3.getEnemyRotation());
+			theEnemy3.setMapPosition(8, 0);
+			theTileMap.update(theEnemy3.getMapPosition(), 2, theEnemy3.getEnemyRotation());
+		}
+
+		else
+		{
+			theTileMap.update(theEnemy3.getMapPosition(), 1, theEnemy3.getEnemyRotation());
+			theEnemy3.setMapPosition(8, 0);
+			theTileMap.update(theEnemy3.getMapPosition(), 2, theEnemy3.getEnemyRotation());
+		}
+	}
+
 
 	if (thePlayer.stompTimer1 == true)
 	{
@@ -323,14 +426,51 @@ void cGame::update(double deltaTime)
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, gameState::quit, theAreaClicked);
 	}
+
 	else
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, gameState::end, theAreaClicked);
 	}
+
 	theGameState = theButtonMgr->getBtn("play_btn")->update(theGameState, gameState::playing, theAreaClicked);
 	theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, gameState::menu, theAreaClicked);
 
-	// Check if Player has collided with the Enemy
+	if (Chance == 3)
+	{
+		thePlayer.isCaught = true;
+		theAreaClicked.x = 860;
+		theAreaClicked.y = 610;
+	}
+	else {
+		thePlayer.isCaught = false;
+	}
+
+	if (theGameState == gameState::menu)
+		if (thePlayer.isCaught = true)
+		{
+			Score = 0;
+			Chance = 0;
+
+			theTileMap.update(thePlayer.getMapPosition(), 1, thePlayer.getPlayerRotation());
+			thePlayer.setMapPosition(0, 1);
+			theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
+
+			theTileMap.update(theEnemy.getMapPosition(), 1, theEnemy.getEnemyRotation());
+			theEnemy.setMapPosition(8, 2);
+			theTileMap.update(theEnemy.getMapPosition(), 2, theEnemy.getEnemyRotation());
+
+			theTileMap.update(theEnemy2.getMapPosition(), 1, theEnemy2.getEnemyRotation());
+			theEnemy2.setMapPosition(8, 1);
+			theTileMap.update(theEnemy2.getMapPosition(), 2, theEnemy2.getEnemyRotation());
+
+			theTileMap.update(theEnemy3.getMapPosition(), 1, theEnemy3.getEnemyRotation());
+			theEnemy3.setMapPosition(8, 0);
+			theTileMap.update(theEnemy3.getMapPosition(), 2, theEnemy3.getEnemyRotation());
+			
+			thePlayer.isCaught = false;
+		}
+
+	// Check if Player has collided with Enemy
 	if (thePlayer.isStomping == true)
 	{
 		if ((thePlayer.getMapPosition().C == theEnemy.getMapPosition().C) && thePlayer.getMapPosition().R == (theEnemy.getMapPosition().R) - 1)
@@ -339,35 +479,83 @@ void cGame::update(double deltaTime)
 			theSoundMgr->getSnd("stompHit")->play(0);
 			strScore = gameTextList[gameTextList.size() - 1];
 			strScore += to_string(Score).c_str();
-			theTextureMgr->deleteTexture("EnemyCount");
+			theTextureMgr->deleteTexture("enemyCount");
 			theTileMap.update(theEnemy.getMapPosition(), 1, theEnemy.getEnemyRotation());
-			theEnemy.setMapPosition(9, 2);
+			theEnemy.setMapPosition(8, 2);
 			theTileMap.update(theEnemy.getMapPosition(), 2, theEnemy.getEnemyRotation());
 		}
 	}
 
+	// Check if Player has collided with Enemy2
+	if (thePlayer.isStomping == true)
+	{
+		if ((thePlayer.getMapPosition().C == theEnemy2.getMapPosition().C) && thePlayer.getMapPosition().R == (theEnemy2.getMapPosition().R) - 1)
+		{
+			Score++;
+			theSoundMgr->getSnd("stompHit")->play(0);
+			strScore = gameTextList[gameTextList.size() - 1];
+			strScore += to_string(Score).c_str();
+			theTextureMgr->deleteTexture("enemyCount");
+			theTileMap.update(theEnemy2.getMapPosition(), 1, theEnemy2.getEnemyRotation());
+			theEnemy2.setMapPosition(8, 1);
+			theTileMap.update(theEnemy2.getMapPosition(), 2, theEnemy2.getEnemyRotation());
+		}
+	}
+
+	// Check if Player has collided with Enemy3
+	if (thePlayer.isStomping == true)
+	{
+		if ((thePlayer.getMapPosition().C == theEnemy3.getMapPosition().C) && thePlayer.getMapPosition().R == (theEnemy3.getMapPosition().R) - 1)
+		{
+			Score++;
+			theSoundMgr->getSnd("stompHit")->play(0);
+			strScore = gameTextList[gameTextList.size() - 1];
+			strScore += to_string(Score).c_str();
+			theTextureMgr->deleteTexture("enemyCount");
+			theTileMap.update(theEnemy3.getMapPosition(), 1, theEnemy3.getEnemyRotation());
+			theEnemy3.setMapPosition(8, 0);
+			theTileMap.update(theEnemy3.getMapPosition(), 2, theEnemy3.getEnemyRotation());
+		}
+	}
+
+
+
 	if (theGameState == gameState::playing)
-		
+	{
+
 		if (enemyTimerSlow == 48)
 		{
-		theTileMap.updateEnemy(theEnemy.getMapPosition(), 1);
-		theEnemy.setMapPosition(theEnemy.getMapPosition().R - 1, theEnemy.getMapPosition().C);
-		theTileMap.updateEnemy(theEnemy.getMapPosition(), 2);
+			theTileMap.updateEnemy(theEnemy.getMapPosition(), 1);
+			theEnemy.setMapPosition(theEnemy.getMapPosition().R - 1, theEnemy.getMapPosition().C);
+			theTileMap.updateEnemy(theEnemy.getMapPosition(), 2);
 		}
 
-		/*if (enemyTimerMedi == 40)
+		if (enemyTimerMedi == 36)
 		{
 			theTileMap.updateEnemy2(theEnemy2.getMapPosition(), 1);
-			theEnemy.setMapPosition(theEnemy2.getMapPosition().R - 1, theEnemy2.getMapPosition().C);
+			theEnemy2.setMapPosition(theEnemy2.getMapPosition().R - 1, theEnemy2.getMapPosition().C);
 			theTileMap.updateEnemy2(theEnemy2.getMapPosition(), 2);
 		}
 
 		if (enemyTimerFast == 25)
 		{
 			theTileMap.updateEnemy3(theEnemy3.getMapPosition(), 1);
-			theEnemy.setMapPosition(theEnemy3.getMapPosition().R - 1, theEnemy3.getMapPosition().C);
+			theEnemy3.setMapPosition(theEnemy3.getMapPosition().R - 1, theEnemy3.getMapPosition().C);
 			theTileMap.updateEnemy3(theEnemy3.getMapPosition(), 2);
-		}*/
+		}
+	}
+
+/*	if (thePlayer.isCaught == true)
+	{
+		if (theGameState == gameState::end)
+		{
+			cout << "Pointer points to position: " << theButtonMgr->getBtn("menu_btn")->getClicked();
+			if (theButtonMgr->getBtn("menu_btn")->getClicked() == 1)
+			{
+				theGameState == gameState::menu;
+			}
+		}
+	}*/
 
 }
 
@@ -443,26 +631,32 @@ bool cGame::getInput(bool theLoop)
 				case SDLK_RIGHT:
 				{
 					if (theGameState == gameState::playing)
+					{
 						if (thePlayer.getMapPosition().C < 2)
 						{
+							theSoundMgr->getSnd("move")->play(0);
 							theTileMap.update(thePlayer.getMapPosition(), 1, thePlayer.getPlayerRotation());
 							thePlayer.setMapPosition(thePlayer.getMapPosition().R, thePlayer.getMapPosition().C + 1);
 							thePlayer.setPlayerRotation(0);
 							theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
 						}
+					}
 				}
 				break;
 				
 				case SDLK_LEFT:
 				{
 					if (theGameState == gameState::playing)
+					{
 						if (thePlayer.getMapPosition().C > 0)
 						{
+							theSoundMgr->getSnd("move")->play(0);
 							theTileMap.update(thePlayer.getMapPosition(), 1, thePlayer.getPlayerRotation());
 							thePlayer.setMapPosition(thePlayer.getMapPosition().R, thePlayer.getMapPosition().C - 1);
 							thePlayer.setPlayerRotation(0);
 							theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
 						}
+					}
 				}
 				break;
 				case SDLK_SPACE:
@@ -487,6 +681,17 @@ bool cGame::getInput(bool theLoop)
 					}
 					
 				}
+
+				break;
+				case SDLK_RETURN:
+				{
+					
+					
+						theGameState = gameState::menu;
+					
+				}
+
+
 				break;
 				default:
 					break;
