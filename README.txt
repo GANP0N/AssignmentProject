@@ -3,8 +3,6 @@ https://www.1001freefonts.com/true-lies.font
 
 Theme Music from DL sounds: https://www.dl-sounds.com/royalty-free/fast-ace/
 
-Wind SFX obtained from freesfx.co.uk: https://www.freesfx.co.uk/Category/Wind/53/Heavy-Wind
-
 Stomp SFX obtained from freesound.org: https://freesound.org/people/darealwollen/sounds/368647/
 
 StompHit SFX obtained from freesound.org: https://freesound.org/people/AlienXXX/sounds/208455/
