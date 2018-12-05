@@ -93,8 +93,8 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 48);
 	}
 	// Create text Textures
-	gameTextNames = { "TitleTxt", "CollectTxt", "InstructTxt", "InstructTxt2", "GameOverTxt", "SeeYouTxt", "Missed", "MissedOutOf", "Score", "enemyCount", "chanceCount"};
-	gameTextList = { "STOMP", "Defeat the Robots when they're 1 tile below you!", "Use the Left & Right arrow keys to move.", "Use the SPACEBAR to Stomp!", "Game Over! You've Been Caught!", "See you next time!", "Missed: ", "/3", "Score: ", "Score: ", ""};
+	gameTextNames = { "TitleTxt", "CollectTxt", "InstructTxt", "InstructTxt2", "GameControlsTitle", "GameControlsTitleUnderline", "GameControlsMove", "GameControlsAttack", "GameAttack1", "GameAttack2", "GameOverTxt", "SeeYouTxt", "Missed", "MissedOutOf", "Score", "enemyCount", "chanceCount"};
+	gameTextList = { "STOMP", "Defeat the Robots when they're 1 tile below you!", "Use the Left & Right arrow keys to move.", "Use the SPACEBAR to Stomp!", "CONTROLS", "____________", "Move: Left & Right Arrow Keys", "STOMP: SPACEBAR", "Stomp on Enemies when", "they are 1 tile below you!", "Game Over! You've Been Caught!", "See you next time!", "Missed: ", "/3", "Score: ", "Score: ", ""};
 	for (unsigned int text = 0; text < gameTextNames.size(); text++)
 	{
 		if (text == 0)
@@ -107,9 +107,9 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		}
 	}
 	// Load game sounds
-	soundList = { "mainTheme", "wind", "click", "stomp", "stompHit", "roboOut", "move"};
-	soundTypes = { soundType::music, soundType::music, soundType::sfx, soundType::sfx, soundType::sfx, soundType::sfx , soundType::sfx};
-	soundsToUse = { "Audio/Theme/FastAce.wav", "Audio/Theme/Wind.wav", "Audio/SFX/ClickOn.wav", "Audio/SFX/Stomp.wav", "Audio/SFX/StompHit.wav", "Audio/SFX/roboOut.wav", "Audio/SFX/move.wav" };
+	soundList = { "mainTheme", "click", "stomp", "stompHit", "roboOut", "move"};
+	soundTypes = { soundType::music, soundType::sfx, soundType::sfx, soundType::sfx, soundType::sfx , soundType::sfx};
+	soundsToUse = { "Audio/Theme/FastAce.wav", "Audio/SFX/ClickOn.wav", "Audio/SFX/Stomp.wav", "Audio/SFX/StompHit.wav", "Audio/SFX/roboOut.wav", "Audio/SFX/move.wav" };
 	for (unsigned int sounds = 0; sounds < soundList.size(); sounds++)
 	{
 		theSoundMgr->add(soundList[sounds], soundsToUse[sounds], soundTypes[sounds]);
@@ -119,6 +119,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	spriteBkgd.setTexture(theTextureMgr->getTexture("OpeningScreen"));
 	spriteBkgd.setSpriteDimensions(theTextureMgr->getTexture("OpeningScreen")->getTWidth(), theTextureMgr->getTexture("OpeningScreen")->getTHeight());
 
+	//Set coordinates for objects in game
 	theTileMap.setMapStartXY({ 310, 100 });
 	thePlayer.setMapPosition(0, 1);
 	theEnemy.setMapPosition(8, 2);
@@ -129,6 +130,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	theTileMap.update(theEnemy2.getMapPosition(), 2, theEnemy2.getEnemyRotation());
 	theTileMap.update(theEnemy3.getMapPosition(), 2, theEnemy3.getEnemyRotation());
 
+	//Initialise Score and Chance for Display
 	Score = 0;
 	strScore = gameTextList[gameTextList.size() - 1];
 	strScore += to_string(Score).c_str();
@@ -139,7 +141,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	strChance += to_string(Chance).c_str();
 	theTextureMgr->deleteTexture("chanceCount");
 
-//	theSoundMgr->getSnd("mainTheme")->play(-1);
+	theSoundMgr->getSnd("mainTheme")->play(-1);
 
 	
 }
@@ -209,26 +211,51 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		pos = { 400, 20, tempTextTexture->getTextureRect().w + 30, tempTextTexture->getTextureRect().h + 15 };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 
+		//Text for Missed robots
 		tempTextTexture = theTextureMgr->getTexture("Missed");
 		pos = { 100, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h};
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 
+		//Text for Score
 		tempTextTexture = theTextureMgr->getTexture("Score");
 		pos = { 700, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h};
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 
+		//the " / 3" Limit before game over is displayed
 		tempTextTexture = theTextureMgr->getTexture("MissedOutOf");
 		pos = { 275, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		
+		//The Number that increases with every successful hit of an enemy.
 		theTextureMgr->addTexture("enemyCount", theFontMgr->getFont("germania")->createTextTexture(theRenderer, strScore.c_str(), textType::solid, { 95, 0, 0, 255 }, { 0, 0, 0, 0 }));
 		tempTextTexture = theTextureMgr->getTexture("enemyCount");
 		pos = { 825, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 		
+		//The Number that increases when you miss an enemy
 		theTextureMgr->addTexture("chanceCount", theFontMgr->getFont("germania")->createTextTexture(theRenderer, strChance.c_str(), textType::solid, { 0, 0, 95, 255 }, { 0, 0, 0, 0 }));
 		tempTextTexture = theTextureMgr->getTexture("chanceCount");
 		pos = { 250, 20, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+
+		//Renders information for controls and instructions on the playing screen to the right hand side
+		tempTextTexture = theTextureMgr->getTexture("GameControlsTitle");
+		pos = { 755, 200, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		tempTextTexture = theTextureMgr->getTexture("GameControlsTitleUnderline");
+		pos = { 700, 210, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		tempTextTexture = theTextureMgr->getTexture("GameControlsMove");
+		pos = { 700, 300, tempTextTexture->getTextureRect().w - 260, tempTextTexture->getTextureRect().h - 25};
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		tempTextTexture = theTextureMgr->getTexture("GameControlsAttack");
+		pos = { 700, 350, tempTextTexture->getTextureRect().w - 100, tempTextTexture->getTextureRect().h - 20 };
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		tempTextTexture = theTextureMgr->getTexture("GameAttack1");
+		pos = { 700, 450, tempTextTexture->getTextureRect().w - 175, tempTextTexture->getTextureRect().h - 20 };
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		tempTextTexture = theTextureMgr->getTexture("GameAttack2");
+		pos = { 700, 500, tempTextTexture->getTextureRect().w - 175, tempTextTexture->getTextureRect().h - 20 };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 
 		theTileMap.render(theSDLWND, theRenderer, theTextureMgr, textureName);
@@ -263,6 +290,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		pos = { 525, 400, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h };
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
 
+		//Checks to see if player is on this screen from a GameOver
 		if (thePlayer.isCaught == true)
 		{
 			tempTextTexture = theTextureMgr->getTexture("GameOverTxt");
@@ -324,7 +352,7 @@ void cGame::update(double deltaTime)
 		}
 	}
 
-	//Checks to see if Enemy has reached the player
+	//Checks to see if Enemy has reached the player and how to update the textures accordingly
 	if (theEnemy.getMapPosition().R == thePlayer.getMapPosition().R)
 	{
 		Chance++;
@@ -347,7 +375,7 @@ void cGame::update(double deltaTime)
 	}
 
 
-	//Checks to see if Enemy2 has reached the player
+	//Checks to see if Enemy2 has reached the player and how to update the textures accordingly
 	if (theEnemy2.getMapPosition().R == thePlayer.getMapPosition().R)
 	{
 		Chance++;
@@ -369,7 +397,7 @@ void cGame::update(double deltaTime)
 		}
 	}
 
-	//Checks to see if Enemy3 has reached the player
+	//Checks to see if Enemy3 has reached the player and how to update the textures accordingly
 	if (theEnemy3.getMapPosition().R == thePlayer.getMapPosition().R)
 	{
 		Chance++;
@@ -392,7 +420,7 @@ void cGame::update(double deltaTime)
 		}
 	}
 
-
+	//Checks to see if the player has begun the Stomp Atack and begins a timer so that animations can run at set times
 	if (thePlayer.stompTimer1 == true)
 	{
 		thePlayer.stompTime1++;
@@ -401,13 +429,12 @@ void cGame::update(double deltaTime)
 		{
 			theTileMap.update(thePlayer.getMapPosition(), 5, thePlayer.getPlayerRotation());
 			thePlayer.isStomping = true;
-			thePlayer.stompTimer2 = true;
 			theSoundMgr->getSnd("stomp")->play(0);
 			
 			
 		}
 
-		cout << "time elapsed: " << thePlayer.stompTime2 << endl;
+		//Checks to see if the timer for the attacking animation of the Stomp attack has been reached. Resets upon completion.
 		if (thePlayer.stompTime2 == 30)
 		{
 			theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
@@ -415,7 +442,7 @@ void cGame::update(double deltaTime)
 			thePlayer.stompTime1 = 0;
 			thePlayer.stompTime2 = 0;
 			thePlayer.stompTimer1 = false;
-			thePlayer.stompTimer2 = false;
+
 		}
 
 	}
@@ -435,16 +462,19 @@ void cGame::update(double deltaTime)
 	theGameState = theButtonMgr->getBtn("play_btn")->update(theGameState, gameState::playing, theAreaClicked);
 	theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, gameState::menu, theAreaClicked);
 
+	//Checks to see if Player has met the Losing Condition and simulates a click on the exit button to load the end screen.
 	if (Chance == 3)
 	{
 		thePlayer.isCaught = true;
 		theAreaClicked.x = 860;
 		theAreaClicked.y = 610;
 	}
-	else {
+	else 
+	{
 		thePlayer.isCaught = false;
 	}
 
+	//Checks to see if player is on menu from a previous playthrough and resets all the required assets for a new game.
 	if (theGameState == gameState::menu)
 		if (thePlayer.isCaught = true)
 		{
@@ -519,7 +549,7 @@ void cGame::update(double deltaTime)
 	}
 
 
-
+	//Checks to see if the game is being played and moves the enemy when their timer reaches a set time.
 	if (theGameState == gameState::playing)
 	{
 
@@ -544,19 +574,6 @@ void cGame::update(double deltaTime)
 			theTileMap.updateEnemy3(theEnemy3.getMapPosition(), 2);
 		}
 	}
-
-/*	if (thePlayer.isCaught == true)
-	{
-		if (theGameState == gameState::end)
-		{
-			cout << "Pointer points to position: " << theButtonMgr->getBtn("menu_btn")->getClicked();
-			if (theButtonMgr->getBtn("menu_btn")->getClicked() == 1)
-			{
-				theGameState == gameState::menu;
-			}
-		}
-	}*/
-
 }
 
 
@@ -573,132 +590,128 @@ bool cGame::getInput(bool theLoop)
 
 		switch (event.type)
 		{
-			case SDL_MOUSEBUTTONDOWN:
-				switch (event.button.button)
-				{
-				case SDL_BUTTON_LEFT:
-				{
-					theAreaClicked = { event.motion.x, event.motion.y };
-					//if (theGameState == gameState::playing)
-					//{
-					//	theTilePicker.update(theAreaClicked);
-					//	if (theTilePicker.getTilePicked() > -1)
-					//	{
-					//		dragTile.setSpritePos(theAreaClicked);
-					//		dragTile.setTexture(theTextureMgr->getTexture(textureName[theTilePicker.getTilePicked() - 1]));
-					//		dragTile.setSpriteDimensions(theTextureMgr->getTexture(textureName[theTilePicker.getTilePicked() - 1])->getTWidth(), theTextureMgr->getTexture(textureName[theTilePicker.getTilePicked() - 1])->getTHeight());
-					//	}
-					//}
-				}
-				break;
-				case SDL_BUTTON_RIGHT:
-					break;
-				default:
-					break;
-				}
-				break;
-			case SDL_MOUSEBUTTONUP:
-				switch (event.button.button)
-				{
-				case SDL_BUTTON_LEFT:
-				{
-					//if (theGameState == gameState::playing)
-					//{
-					//	theAreaClicked = { event.motion.x, event.motion.y };
-					//	theTileMap.update(theAreaClicked, theTilePicker.getTilePicked());
-					//	theTilePicker.setTilePicked(-1);
-					//}
-				}
-				break;
-				case SDL_BUTTON_RIGHT:
-					break;
-				default:
-					break;
-				}
-				break;
-			case SDL_MOUSEMOTION:
+		case SDL_MOUSEBUTTONDOWN:
+			switch (event.button.button)
 			{
-				dragTile.setSpritePos({ event.motion.x, event.motion.y });
+			case SDL_BUTTON_LEFT:
+			{
+				theAreaClicked = { event.motion.x, event.motion.y };
+				//if (theGameState == gameState::playing)
+				//{
+				//	theTilePicker.update(theAreaClicked);
+				//	if (theTilePicker.getTilePicked() > -1)
+				//	{
+				//		dragTile.setSpritePos(theAreaClicked);
+				//		dragTile.setTexture(theTextureMgr->getTexture(textureName[theTilePicker.getTilePicked() - 1]));
+				//		dragTile.setSpriteDimensions(theTextureMgr->getTexture(textureName[theTilePicker.getTilePicked() - 1])->getTWidth(), theTextureMgr->getTexture(textureName[theTilePicker.getTilePicked() - 1])->getTHeight());
+				//	}
+				//}
 			}
 			break;
-			case SDL_KEYDOWN:
-				switch (event.key.keysym.sym)
-				{
-				case SDLK_ESCAPE:
-					theLoop = false;
-					break;
-
-				case SDLK_RIGHT:
-				{
-					if (theGameState == gameState::playing)
-					{
-						if (thePlayer.getMapPosition().C < 2)
-						{
-							theSoundMgr->getSnd("move")->play(0);
-							theTileMap.update(thePlayer.getMapPosition(), 1, thePlayer.getPlayerRotation());
-							thePlayer.setMapPosition(thePlayer.getMapPosition().R, thePlayer.getMapPosition().C + 1);
-							thePlayer.setPlayerRotation(0);
-							theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
-						}
-					}
-				}
+			case SDL_BUTTON_RIGHT:
 				break;
-				
-				case SDLK_LEFT:
-				{
-					if (theGameState == gameState::playing)
-					{
-						if (thePlayer.getMapPosition().C > 0)
-						{
-							theSoundMgr->getSnd("move")->play(0);
-							theTileMap.update(thePlayer.getMapPosition(), 1, thePlayer.getPlayerRotation());
-							thePlayer.setMapPosition(thePlayer.getMapPosition().R, thePlayer.getMapPosition().C - 1);
-							thePlayer.setPlayerRotation(0);
-							theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
-						}
-					}
-				}
-				break;
-				case SDLK_SPACE:
-				{
-					if (theGameState == gameState::playing)
-					{
-
-						if (thePlayer.getMapPosition().C >= 0)
-						{
-							//if (thePlayer.isStomping = false)
-							//{
-								theTileMap.update(thePlayer.getMapPosition(), 4, thePlayer.getPlayerRotation());
-								thePlayer.stompTimer1 = true;
-
-							//}
-						}
-						else
-						{
-							thePlayer.isStomping = false;
-							theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
-						}
-					}
-					
-				}
-
-				break;
-				case SDLK_RETURN:
-				{
-					
-					
-						theGameState = gameState::menu;
-					
-				}
-
-
-				break;
-				default:
-					break;
-				}
-
 			default:
 				break;
+			}
+			break;
+		case SDL_MOUSEBUTTONUP:
+			switch (event.button.button)
+			{
+			case SDL_BUTTON_LEFT:
+			{
+				//if (theGameState == gameState::playing)
+				//{
+				//	theAreaClicked = { event.motion.x, event.motion.y };
+				//	theTileMap.update(theAreaClicked, theTilePicker.getTilePicked());
+				//	theTilePicker.setTilePicked(-1);
+				//}
+			}
+			break;
+			case SDL_BUTTON_RIGHT:
+				break;
+			default:
+				break;
+			}
+			break;
+		case SDL_MOUSEMOTION:
+		{
+			dragTile.setSpritePos({ event.motion.x, event.motion.y });
+		}
+		break;
+		case SDL_KEYDOWN:
+			switch (event.key.keysym.sym)
+			{
+			case SDLK_ESCAPE:
+				theLoop = false;
+				break;
+
+			case SDLK_RIGHT:
+			{
+				if (theGameState == gameState::playing)
+				{
+					if (thePlayer.getMapPosition().C < 2)
+					{
+						theSoundMgr->getSnd("move")->play(0);
+						theTileMap.update(thePlayer.getMapPosition(), 1, thePlayer.getPlayerRotation());
+						thePlayer.setMapPosition(thePlayer.getMapPosition().R, thePlayer.getMapPosition().C + 1);
+						thePlayer.setPlayerRotation(0);
+						theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
+					}
+				}
+			}
+			break;
+
+			case SDLK_LEFT:
+			{
+				if (theGameState == gameState::playing)
+				{
+					if (thePlayer.getMapPosition().C > 0)
+					{
+						theSoundMgr->getSnd("move")->play(0);
+						theTileMap.update(thePlayer.getMapPosition(), 1, thePlayer.getPlayerRotation());
+						thePlayer.setMapPosition(thePlayer.getMapPosition().R, thePlayer.getMapPosition().C - 1);
+						thePlayer.setPlayerRotation(0);
+						theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
+					}
+				}
+			}
+			break;
+			case SDLK_SPACE:
+			{
+				if (theGameState == gameState::playing)
+				{
+
+					if (thePlayer.getMapPosition().C >= 0)
+					{						
+						theTileMap.update(thePlayer.getMapPosition(), 4, thePlayer.getPlayerRotation());
+						thePlayer.stompTimer1 = true;
+					}
+					else
+					{
+						thePlayer.isStomping = false;
+						theTileMap.update(thePlayer.getMapPosition(), 3, thePlayer.getPlayerRotation());
+					}
+				}
+
+			}
+
+			break;
+			case SDLK_RETURN:
+			{
+
+
+				theGameState = gameState::menu;
+
+			}
+
+
+			break;
+			default:
+				break;
+			}
+
+		default:
+			break;
 		}
 
 	}

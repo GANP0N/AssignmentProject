@@ -83,12 +83,12 @@ private:
 	cTexture* tempTextTexture;
 	SDL_Point theAreaClicked;
 	cPlayer thePlayer;
-	cEnemy theEnemy;
-	cEnemy theEnemy2;
-	cEnemy theEnemy3;
+	cEnemy theEnemy; //The First Robot Enemy (Right column)
+	cEnemy theEnemy2; //The Second Robot Enemy (Center column)
+	cEnemy theEnemy3; //The Third Robot Enemy (Left column)
 	int Score;
 	string strScore;
-	int Chance;
+	int Chance; //Variable for a chance or life system
 	string strChance;
 };
 
